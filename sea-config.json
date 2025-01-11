@@ -1,0 +1,5 @@
+{
+  "main": "build/agish.js",
+  "output": "build/sea-prep.blob",
+  "disableExperimentalSEAWarning": true
+}

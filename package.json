@@ -1,0 +1,40 @@
+{
+  "name": "agentic-shell",
+  "version": "1.0.0",
+  "description": "Agentic Shell (AGIsh) is an experimental shell where commands are interpreted by a large language model (LLM). ",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "node --env-file=.env -r ts-node/register -r tsconfig-paths/register src/index.ts",
+    "build": "./scripts/build.sh",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Flux159/agentic-shell.git"
+  },
+  "keywords": [
+    "agish",
+    "agentic-shell",
+    "llm"
+  ],
+  "author": "Flux159",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Flux159/agentic-shell/issues"
+  },
+  "homepage": "https://github.com/Flux159/agentic-shell#readme",
+  "dependencies": {
+    "@anthropic-ai/bedrock-sdk": "^0.12.0",
+    "@anthropic-ai/sdk": "^0.33.1",
+    "commander": "^13.0.0",
+    "openai": "^4.77.4",
+    "simple-git": "^3.27.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "esbuild": "^0.24.2",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.7.3"
+  }
+}

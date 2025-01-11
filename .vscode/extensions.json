@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "meta.sapling-scm",
+    "dbaeumer.vscode-eslint"
+  ]
+}

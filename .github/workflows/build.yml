@@ -1,0 +1,150 @@
+name: Build AGIsh
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          # macOS builds
+          - os: macos-latest
+            platform: darwin
+            arch: x64
+            node-arch: x64
+          - os: macos-latest
+            platform: darwin
+            arch: arm64
+            node-arch: arm64
+
+          # Windows & Linux ARM builds are not available for free users right now: https://github.com/actions/runner-images/issues/10820
+          # Linux builds
+          - os: ubuntu-latest
+            platform: linux
+            arch: x64
+            node-arch: x64
+          # Arm not available here
+          # - os: ubuntu-latest
+          #   platform: linux
+          #   arch: arm64
+          #   node-arch: arm64
+
+          # Windows builds
+          - os: windows-latest
+            platform: win32
+            arch: x64
+            node-arch: x64
+          # - os: windows-latest
+          #   platform: win32
+          #   arch: arm64
+          #   node-arch: arm64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          architecture: ${{ matrix.node-arch }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build TypeScript
+        run: npx tsc
+
+      - name: Bundle with esbuild
+        run: npx esbuild dist/index.js --bundle --platform=node --minify --outfile=build/agish.js
+
+      - name: Create SEA blob
+        run: node --experimental-sea-config sea-config.json
+
+      - name: Build for Windows
+        if: matrix.platform == 'win32'
+        shell: pwsh
+        run: |
+          Copy-Item (Get-Command node).Source build/agish.exe
+          npx postject build/agish.exe NODE_SEA_BLOB build/sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2
+
+      - name: Build for macOS
+        if: matrix.platform == 'darwin'
+        run: |
+          cp $(which node) ./build/agish
+          chmod 755 ./build/agish
+          codesign --remove-signature ./build/agish
+          npx postject ./build/agish NODE_SEA_BLOB ./build/sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 --macho-segment-name NODE_SEA
+          codesign --sign - ./build/agish
+
+      - name: Build for Linux
+        if: matrix.platform == 'linux'
+        run: |
+          cp $(which node) ./build/agish
+          chmod 755 ./build/agish
+          npx postject ./build/agish NODE_SEA_BLOB ./build/sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        if: matrix.platform == 'linux'
+        with:
+          name: agish-${{ matrix.platform }}-${{ matrix.arch }}
+          path: |
+            build/agish
+          if-no-files-found: error
+
+      - name: Upload artifacts (macOS)
+        uses: actions/upload-artifact@v4
+        if: matrix.platform == 'darwin'
+        with:
+          name: agish-macos-${{ matrix.arch }}
+          path: |
+            build/agish
+          if-no-files-found: error
+
+      - name: Upload artifacts (Windows)
+        uses: actions/upload-artifact@v4
+        if: matrix.platform == 'win32'
+        with:
+          name: agish-${{ matrix.platform }}-${{ matrix.arch }}
+          path: |
+            build/agish.exe
+          if-no-files-found: error
+
+  # Optional: Create GitHub Release with artifacts
+  release:
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Prepare release files
+        run: |
+          mkdir release
+          cp dist/agish-linux-x64/agish release/agish-linux-x64
+          cp dist/agish-macos-x64/agish release/agish-macos-x64
+          cp dist/agish-macos-arm64/agish release/agish-macos-arm64
+          cp dist/agish-win32-x64/agish.exe release/agish-win32-x64.exe
+
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Release v${{ github.run_number }}
+          files: |
+            release/agish-linux-x64
+            release/agish-macos-x64
+            release/agish-macos-arm64
+            release/agish-win32-x64.exe
