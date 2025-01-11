@@ -33,7 +33,7 @@ Download from [releases](https://github.com/Flux159/agentic-shell/releases), `ch
 ## Mac OS X (Apple Silicon/ARM64)
 
 ```bash
-curl -L https://github.com/Flux159/agentic-shell/releases/download/v26/agish-macos-arm64 -o agish
+curl -L https://github.com/Flux159/agentic-shell/releases/download/v1/agish-macos-arm64 -o agish
 chmod +x agish
 sudo mv agish /usr/local/bin/ # Or move to any other directory in your PATH
 ```
@@ -41,7 +41,7 @@ sudo mv agish /usr/local/bin/ # Or move to any other directory in your PATH
 ## Mac OS X (Intel/x64)
 
 ```bash
-curl -L https://github.com/Flux159/agentic-shell/releases/download/v26/agish-macos-x64 -o agish
+curl -L https://github.com/Flux159/agentic-shell/releases/download/v1/agish-macos-x64 -o agish
 chmod +x agish
 sudo mv agish /usr/local/bin/ # Or move to any other directory in your PATH
 ```
@@ -49,7 +49,7 @@ sudo mv agish /usr/local/bin/ # Or move to any other directory in your PATH
 ## Linux (x64)
 
 ```bash
-curl -L https://github.com/Flux159/agentic-shell/releases/download/v26/agish-linux-x64 -o agish
+curl -L https://github.com/Flux159/agentic-shell/releases/download/v1/agish-linux-x64 -o agish
 chmod +x agish
 sudo mv agish /usr/local/bin/ # Or move to any other directory in your PATH
 ```
