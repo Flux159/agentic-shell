@@ -54,23 +54,6 @@ chmod +x agish
 sudo mv agish /usr/local/bin/ # Or move to any other directory in your PATH
 ```
 
-# Development
-
-```
-git clone https://github.com/Flux159/agentic-shell.git
-cd agentic-shell
-npm install
-cp .env.local.example .env.local
-# Update .env.local with your API keys
-npm run dev
-```
-
-# Building
-
-```
-npm run build
-```
-
 # Usage
 
 In your shell, make sure you have the following environment variable is set.
@@ -117,6 +100,23 @@ Build up a directory of test suites for LLMs in a directory & run all of them ag
 
 ```bash
 find tests/ -type f -exec agish < {} \;
+```
+
+# Development
+
+```
+git clone https://github.com/Flux159/agentic-shell.git
+cd agentic-shell
+npm install
+cp .env.local.example .env.local
+# Update .env.local with your API keys
+npm run dev
+```
+
+# Building
+
+```
+npm run build
 ```
 
 ### License
